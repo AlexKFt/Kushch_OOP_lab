@@ -9,9 +9,9 @@ class File
 {
 private:
 	std::string name;
-	unsigned size;
 	std::string AccessMode;
-	char* content{ nullptr };
+	std::string description;
+	unsigned size;
 
 
 	friend std::istream& operator>>(std::istream& in, File& file);
@@ -24,9 +24,9 @@ private:
 public:
 	File() = default;
 
-	File(const std::string& name, const std::string& AccessMode) : name{ name }, AccessMode{ AccessMode }
+	File(const std::string& name, const std::string& AccessMode, std::string& desc) : name{ name }, AccessMode{ AccessMode }, description{desc}
 	{
-		size = sizeof(name) + sizeof(AccessMode);
+		size = sizeof(name) + sizeof(AccessMode) + sizeof(desc);
 	}
 	~File()
 	{
@@ -36,13 +36,7 @@ public:
 
 	std::string getAccessMode() const;
 
+	std::string getDesription() const;
+
 	int getSize() const;
-
-	/*File(const File&);
-
-	File& operator=(const File&);
-
-	File(File&& f) noexcept;
-
-	File& operator=(File&&) noexcept;*/
 };

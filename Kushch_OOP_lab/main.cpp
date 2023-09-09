@@ -24,7 +24,36 @@ string getFileName()
 	return fileName;
 }
 
+bool fileIsReadyForWriting(std::ofstream& fout)
+{
+	std::string fileName;
 
+	if (!fout.is_open())
+	{
+		fileName = getFileName();
+		fout.open(fileName, std::ios::out);
+	}
+	return fout.is_open();
+}
+
+
+bool fileIsReadyForReading(std::ifstream& fin)
+{
+	std::string fileName;
+
+	if (!fin.is_open())
+	{
+		fileName = getFileName();
+		fin.open(fileName, std::ios::in);
+	}
+	return fin.is_open();
+}
+
+void clearBuffer(istream& in)
+{
+	in.clear();
+	in.ignore(10, '\n');
+}
 
 int main()
 {
@@ -36,17 +65,13 @@ int main()
 	while (commandIndex != 0)
 	{
 		printMenu();
-		cout << "Enter command index (from 1 to 5) \nEnter 0 to exit: ";
-		try {
-			cin >> commandIndex;
-			cin.clear();
-			cin.ignore(10, '\n');
-		}
-		catch (...)
-		{
-			commandIndex = -1;
-		}
+		cout << "Enter command index (from 1 to 5) \nEnter 0 to exit: \n";
 
+		cin >> commandIndex;
+		if (cin.fail())
+			commandIndex = -1;
+
+		clearBuffer(cin);
 		switch (commandIndex)
 		{
 		case 0:
@@ -65,9 +90,8 @@ int main()
 		}
 		case 3:
 		{
-			string fileName{ getFileName() };
-			ifstream fin{ fileName, ios::in };
-			if (fin.is_open())
+			ifstream fin;
+			if (fileIsReadyForReading(fin))
 			{
 				fin >> mainCatalog;
 				cout << "Catalog was loadede from file\n";
@@ -77,9 +101,8 @@ int main()
 		}
 		case 4:
 		{
-			string fileName{ getFileName() };
-			ofstream fout{ fileName, ios::out };
-			if (fout.is_open())
+			ofstream fout;
+			if (fileIsReadyForWriting(fout))
 			{
 				fout << mainCatalog;
 				cout << "Catalog was written to file\n";
@@ -96,7 +119,7 @@ int main()
 		{
 			cout << "You have entered a wrong index\n";
 		}
-		if (!cin)
+		if (!cin.good())
 		{
 			commandIndex = -1;
 			cout << "You have entered a wrong index\n";
